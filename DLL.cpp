@@ -3,178 +3,167 @@
 using namespace std;
 
 class Node {
-    int elem;
+private:
+    int data;
     Node* next;
+    Node* prev;
 
-    friend class S_LinkedList;
+public:
+    Node(int data) {
+        this->data = data;
+        this->next = NULL;
+        this->prev = NULL;
+    }
+
+    friend class DLinkedList;
 };
 
-class S_LinkedList {
-public:
-    S_LinkedList()
-    {
-        head = new Node;
-        tail = new Node;
-        head = NULL;
-        tail = NULL;
-    }
-    void Print()
-    {
-        if (head == NULL && tail == NULL)
-            cout << "empty" << endl;
-        else
-        {
-            Node* cur_node = head;
-            if (cur_node->next == NULL)
-            {
-                cout << cur_node->elem << " ";
-            }
-            else
-            {
-                while (cur_node != NULL)
-                {
-                    cout << cur_node->elem << " ";
-                    cur_node = cur_node->next;
-                }
-            }
-            cout << endl;
-        }
-    }
-    void Append(int x)
-    {
-        Node* new_node = new Node;
-        new_node->elem = x;
-        new_node->next = NULL;
-        if (head == NULL && tail == NULL)
-        {
-            head = new_node;
-            tail = new_node;
-        }
-        else
-        {
-            tail->next = new_node;
-            tail = tail->next;
-        }
-    }
-    void Delete(int i)
-    {
-        Node* cur_node = head;
-        Node* pre_node = NULL;
-        int index{ 0 };
-        if (i <= size || (head == NULL && tail == NULL))
-        {
-            cout << "-1" << endl;
-        }
-        else if (index == i)
-        {
-            cout << cur_node->elem << endl;
-            tail = NULL;
-            head = NULL;
-        }
-        else
-        {
-            while (index != i && cur_node->next != NULL)
-            {
-                pre_node = cur_node;
-                cur_node = cur_node->next;
-                index += 1;
-            }
-            cout << cur_node->elem << endl;
-            if (cur_node == tail)
-            {
-                pre_node = tail;
-                pre_node->next = NULL;
-            }
-            else if (cur_node == head)
-            {
-                cur_node->next = head;
-            }
-            else
-            {
-                pre_node->next = cur_node->next;
-            }
-        }
-    }
-    void Insert(int i, int x)
-    {
-        Node* cur_node = head;
-        Node* pre_node = NULL;
-        int index{ 0 };
-        if (i > size)
-        {
-            cout << "index Error" << endl;
-        }
-        else
-        {
-            while (index != i)
-            {
-                pre_node = cur_node;
-                cur_node = cur_node->next;
-                index += 1;
-            }
-            Node* new_node = new Node;
-            new_node->elem = x;
-            pre_node->next = new_node;
-            new_node->next = cur_node;
-            this->Print();
-        }
-    }
-    void Sum()
-    {
-        int sum{ 0 };
-        if (head == NULL && tail == NULL)
-            cout << sum << endl;
-        else
-        {
-            Node* cur_node = head;
-            while (cur_node != NULL)
-            {
-                sum += cur_node->elem;
-                cur_node = cur_node->next;
-            }
-            cout << sum << endl;
-        }
-    }
+class DLinkedList {
 private:
     Node* head;
     Node* tail;
-    int size{ 0 };
+    int size;
+
+public:
+    DLinkedList() {
+        this->head = NULL;
+        this->tail = NULL;
+        this->size = 0;
+    }
+
+    bool empty() {
+        return size == 0;
+    }
+
+    void print() {
+        if (empty()) {
+            cout << "empty\n";
+        }
+        else {
+            for (Node* curr = head; curr != NULL; curr = curr->next) { //curr이 NULL로 가기 전, 즉 tail까지 출력.
+                cout << curr->data << " ";
+            }
+            cout << "\n";
+        }
+    }
+
+    void append(int data) {
+        Node* newNode = new Node(data);
+
+        if (empty()) {
+            head = newNode;
+            tail = newNode;
+        }
+        else {
+            newNode->prev = tail;
+            tail->next = newNode;
+            tail = newNode;
+        }
+
+        size++;
+
+        print();
+    }
+
+    int Delete(int idx) {
+        if (empty() || idx >= size) {
+            return -1;
+        }
+        else {
+            Node* curr = head;
+
+            while (idx--) {
+                curr = curr->next;
+            }
+
+            int ret;
+
+            if (curr == head) {
+                ret = curr->data;
+                head = curr->next;
+            }
+            else if (curr == tail) {
+                ret = curr->data;
+                tail = curr->prev;
+            }
+            else {
+                ret = curr->data;
+                curr->prev->next = curr->next;
+                curr->next->prev = curr->prev;
+            }
+
+            size--;
+
+            Node* temp = curr;
+
+            delete temp; //삭제를 위해 포인터변수 temp를 생성하고 delete해준다.
+            return ret;
+        }
+    }
+
+    void print_reverse() {
+        if (empty()) {
+            cout << "empty\n";
+        }
+        else {
+            for (Node* curr = tail; curr != NULL; curr = curr->prev) {
+                cout << curr->data << " ";
+            }
+
+            cout << "\n";
+        }
+    }
+
+    void max() {
+        int ret = -987654321;
+
+        if (empty()) {
+            cout << "empty\n";
+        }
+        else {
+            for (Node* curr = head; curr != NULL; curr = curr->next) {
+                if (curr->data > ret) {
+                    ret = curr->data;
+                }
+            }
+
+            cout << ret << "\n";
+        }
+    }
 };
 
-int main()
-{
-    int cnt;
-    cin >> cnt;
-    int  b, c;
-    S_LinkedList s;
+int main() {
+    string cmd;
+    DLinkedList dll;
+    int M;
 
-    for (int i{ 0 }; i < cnt; i++)
-    {
-        string s1;
-        cin >> s1;
-        if (s1 == "Print")
-        {
-            s.Print();
+    cin >> M;
+
+    for (int i = 0; i < M; i++) {
+        cin >> cmd;
+
+        if (cmd == "Print") {
+            dll.print();
         }
-        if (s1 == "Append")
-        {
-            cin >> b;
-            s.Append(b);
-            s.Print();
+        else if (cmd == "Append") {
+            int data;
+
+            cin >> data;
+
+            dll.append(data);
         }
-        if (s1 == "Delete")
-        {
-            cin >> b;
-            s.Delete(b);
+        else if (cmd == "Delete") {
+            int idx;
+
+            cin >> idx;
+
+            cout << dll.Delete(idx) << "\n";
         }
-        if (s1 == "Insert")
-        {
-            cin >> b >> c;
-            s.Insert(b, c);
+        else if (cmd == "Print_reverse") {
+            dll.print_reverse();
         }
-        if (s1 == "Sum")
-        {
-            s.Sum();
+        else if (cmd == "Max") {
+            dll.max();
         }
     }
 }

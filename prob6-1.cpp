@@ -81,7 +81,7 @@ void Tree::delNode(int data) {
 			return;
 		}
 	}
-	
+
 	cout << -1 << endl;
 }
 
@@ -98,7 +98,7 @@ void Tree::preorder(Node* node) {
 void Tree::postorder(Node* node) {
 	if (!node) return;
 
-	
+
 	for (int i = 0; i < node->chi_v.size(); i++) {
 		postorder(node->chi_v[i]);
 
@@ -137,4 +137,32 @@ void Tree::printPar(int data) {
 		}
 	}
 	cout << -1 << endl;;
+}
+
+int main() {
+
+	int T;
+	string s;
+	cin >> T;
+	Tree t(1);
+	for (size_t i = 0; i < T; i++)
+	{
+		cin >> s;
+		if (s == "insert") {
+			int a, b;
+			cin >> a >> b;
+			t.insertNode(a, b);
+		}
+		else if (s == "delete") {
+			int a;
+			cin >> a;
+			t.delNode(a);
+		}
+		else if (s == "print") {
+			int a;
+			cin >> a;
+			t.printChi(a);
+		}
+
+	}
 }
